@@ -8,6 +8,10 @@ __pycache__/
 #нычка Арс
 test2
 my/
+
+# Тестовая папка
+testing/
+
 # Distribution / packaging
 .Python
 build/
