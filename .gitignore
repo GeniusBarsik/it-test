@@ -5,7 +5,9 @@ __pycache__/
 
 # C extensions
 *.so
-
+#нычка Арс
+test2
+my/
 # Distribution / packaging
 .Python
 build/
@@ -14,7 +16,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
