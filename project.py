@@ -1,4 +1,5 @@
 import sqlite3 as sl
+import re
 
 from designs.authorization import Ui_authorization as auth
 from designs.about_customer import Ui_about_customer as about
@@ -11,14 +12,18 @@ from designs.warehouse_info import Ui_warehouse_info as warehouse_info
 from designs.orders_button import Ui_orders as order_button
 from designs.add_products import Ui_ProductEditor as product_editor
 
-class MainApp(auth, about, menu, insert_customer, phone, order_list, order_button, product_button, warehouse_info, product_editor):
+
+class MainApp(auth, about, menu, insert_customer, phone, order_list, order_button, product_button, warehouse_info,
+              product_editor):
     def __init__(self):
         super().__init__()
         self.con = sl.connect('shop_db')
         self.setup_auth()
+        self.lvl_admin = None
+        self.what_to_open = None
+        self.customer_info = []
 
-    # Настройка виджетов
-
+    # ________________________________________НАСТРОЙКА ВИДЖЕТОВ И ИХ СИГНАЛЫ_________________________________
     def setup_auth(self):
         self.authorization_window = QtWidgets.QMainWindow()
         self.authorization = auth()
@@ -40,7 +45,7 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
         self.main_menu.available.clicked.connect(self.setup_warehouse_info)
         self.main_menu.customer.clicked.connect(self.setup_about)
         self.main_menu.order.clicked.connect(self.setup_order_button)
-        #нужно добавить админы НЕ УДАЛЯТЬ!
+        # нужно добавить админы НЕ УДАЛЯТЬ!
 
         # Отображение
         self.menu_window.show()
@@ -55,44 +60,45 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
         # Отображение
         self.about_window.show()
 
-    def setup_insert_custsomer(self):
+    def setup_insert_customer(self):
         # Открытие окна insert_customer
         self.insert_customer_window = QtWidgets.QMainWindow()
         self.insert_customer = insert_customer()
         self.insert_customer.setupUi(self.insert_customer_window)
 
+        # Signals
+
         # Отображение
         self.insert_customer_window.show()
 
-    # изменил
-    def setup_phone(self):
-        # Открытие окна phone
-        self.phone_window = QtWidgets.QMainWindow()
-        self.phone = phone()
-        self.phone.setupUi(self.phone_window, self.con)
-
-        # Привязка сигнала к методу открытия окна insert_customer
-        self.phone.open_insert_customer = self.setup_insert_custsomer
-
-        # Отображение
-        self.phone_window.show()
 
     def setup_order_list(self):
         pass
 
-    #изменил
+    # изменил
     def setup_order_button(self):
         self.order_window = QtWidgets.QMainWindow()
         self.orders = order_button()
         self.orders.setupUi(self.order_window)
-
+        self.what_to_open = 'orders'
         # signals
-        # Привязал signal кнопки с именем add_order
         self.orders.add_order.clicked.connect(self.setup_phone)
-
+        # Отображение
         self.order_window.show()
 
-#подгрузка бд из таблицы Customers
+    def setup_phone(self):
+        # Открытие окна phone
+        self.phone_window = QtWidgets.QMainWindow()
+        self.phone = phone()
+        self.phone.setupUi(self.phone_window)
+
+        # Привязка сигнала к методу открытия окна insert_customer
+        self.phone.next_button.clicked.connect(self.phone_validate)
+
+        # Отображение
+        self.phone_window.show()
+
+    # подгрузка бд из таблицы Customers
     def setup_product_button(self):
         self.product_button_window = QtWidgets.QMainWindow()
         self.products = product_button()
@@ -101,10 +107,65 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
         # Загрузка данных из базы
         self.load_products_to_widget()
 
-
         # Отображение окна
         self.product_button_window.show()
 
+    def setup_warehouse_info(self):
+        self.warehouse_info_window = QtWidgets.QMainWindow()
+        self.warehouses = warehouse_info()
+        self.warehouses.setupUi(self.warehouse_info_window)
+
+        # signals
+
+        # Отображение
+        self.warehouse_info_window.show()
+
+    # ________________________________ ФУНКЦИИ СИГНАЛОВ ______________________________________
+    # Авторизация
+
+    # Проверка пароля
+    def check_pass(self):
+        inline_text = self.authorization.lineEdit.text()
+        self.lvl_admin = self.validate_code(inline_text)
+        if self.lvl_admin:
+            self.authorization_window.close()
+            self.setup_menu()
+        else:
+            print('Мимо')
+
+    # Проверка на наличие USER CODE в DB
+    def validate_code(self, code):
+        info = self.con.execute('SELECT * FROM Admins WHERE user_code = ?', (code,))
+        result = info.fetchall()
+        if result:
+            return result[0][2]
+        else:
+            return False
+
+    # _________________________________________________________________________________________
+    # Валидация номера телефона (правильный или неправильный ввод)
+    def phone_validate(self):
+        number = self.phone.number_edit.text()
+        pattern = r'^(25|29|33|44|45|46)\d{7}$'
+        if re.match(pattern, number):
+            if self.is_number_in_database(number): # Проверяем есть ли номер  в базе и далее проверяем, какое окно открывать
+                if self.what_to_open == 'orders':
+                    self.setup_order_button()
+                elif self.what_to_open == 'customers':
+                    self.setup_about()
+            else:
+                if self.what_to_open == 'orders':
+                    self.setup_insert_customer()
+                elif self.what_to_open == 'customers':
+                    pass
+                    #тут доделать всплывающее окно КЛИЕНТА НЕТ В БАЗЕ
+
+    # Есть ли номер в базе данных
+    def is_number_in_database(self, number):
+        with self.con:
+            info = self.con.execute('SELECT * FROM Customers WHERE phone = ?', (number,))
+            return info
+    #
     def load_products_to_widget(self):
         cursor = self.con.cursor()
 
@@ -121,36 +182,6 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
         for row_index, row_data in enumerate(data):
             for column_index, value in enumerate(row_data):
                 table.setItem(row_index, column_index, QtWidgets.QTableWidgetItem(str(value)))
-
-
-    def setup_warehouse_info(self):
-        self.warehouse_info_window = QtWidgets.QMainWindow()
-        self.warehouses = warehouse_info()
-        self.warehouses.setupUi(self.warehouse_info_window)
-
-        # signals
-
-        # Отображение
-        self.warehouse_info_window.show()
-
-    # Обработка сигналов (их ф-ции)
-
-        # Проверка пароля
-    def check_pass(self):
-        inline_text = self.authorization.lineEdit.text()
-        if self.validate_code(inline_text):
-            self.authorization_window.close()
-            self.setup_menu()
-        else:
-            print('Мимо')
-
-    def validate_code(self, code):
-        info = self.con.execute('SELECT * FROM Admins WHERE user_code = ?', (code,))
-        result = info.fetchall()
-        if result:
-            return True
-        else:
-            return False
 
 
 if __name__ == "__main__":
