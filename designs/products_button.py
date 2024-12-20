@@ -9,7 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from designs.add_products import Ui_ProductEditor  # Импорт класса редактора продукта
 
 class Ui_products(object):
     def setupUi(self, orders):
@@ -53,6 +53,9 @@ class Ui_products(object):
         self.retranslateUi(orders)
         QtCore.QMetaObject.connectSlotsByName(orders)
 
+        self.add_product.clicked.connect(self.open_product_editor)
+
+
     def retranslateUi(self, orders):
         _translate = QtCore.QCoreApplication.translate
         orders.setWindowTitle(_translate("orders", "MainWindow"))
@@ -62,12 +65,20 @@ class Ui_products(object):
         self.reset_button.setText(_translate("orders", "Сброс"))
         self.remove_product.setText(_translate("orders", "Удалить продукт"))
 
+    def open_product_editor(self):
+        """Метод для открытия окна ProductEditor"""
+        self.product_editor_window = QtWidgets.QMainWindow()
+        self.product_editor = Ui_ProductEditor()
+        self.product_editor.setupUi(self.product_editor_window)
+        self.product_editor_window.setWindowModality(QtCore.Qt.ApplicationModal)
+        self.product_editor_window.show()
+
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     orders = QtWidgets.QMainWindow()
-    ui = Ui_orders()
+    ui = Ui_products()
     ui.setupUi(orders)
     orders.show()
     sys.exit(app.exec_())

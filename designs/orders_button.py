@@ -35,6 +35,17 @@ class Ui_orders(object):
         self.retranslateUi(orders)
         QtCore.QMetaObject.connectSlotsByName(orders)
 
+    #кнопка "Добавить заказ"
+    def setup_order_button(self):
+        self.order_window = QtWidgets.QMainWindow()
+        self.orders.setupUi(self.order_window)
+
+        # Привязал кнопку "Добавить заказ" к методу отображения виджета phone
+        self.orders.add_order_button.clicked.connect(self.setup_phone)
+
+        self.order_window.show()
+
+
     def retranslateUi(self, orders):
         _translate = QtCore.QCoreApplication.translate
         orders.setWindowTitle(_translate("orders", "MainWindow"))
