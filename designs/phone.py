@@ -35,61 +35,12 @@ class Ui_phone(object):
         self.retranslateUi(phone)
         QtCore.QMetaObject.connectSlotsByName(phone)
 
-        # Сохраняем подключение к базе данных, переданное из MainApp
-        self.db_connection = db_connection
-
-        # Привязка кнопки "Далее" к методу проверки телефона
-        self.next_button.clicked.connect(self.check_phone_in_db)
 
     def retranslateUi(self, phone):
         _translate = QtCore.QCoreApplication.translate
         phone.setWindowTitle(_translate("phone", "MainWindow"))
         self.label_5.setText(_translate("phone", "Введите номер телефона клиента:"))
         self.next_button.setText(_translate("phone", "Далее"))
-
-
-    def retranslateUi(self, phone):
-        _translate = QtCore.QCoreApplication.translate
-        phone.setWindowTitle(_translate("phone", "MainWindow"))
-        self.label_5.setText(_translate("phone", "Введите номер телефона клиента:"))
-        self.next_button.setText(_translate("phone", "Далее"))
-
-# Метод для проверки телефона в базе данных
-    def check_phone_in_db(self):
-        # Проверяем, передано ли подключение к базе данных
-        if not self.db_connection:
-            QMessageBox.critical(
-                None,
-                "Ошибка",
-                "Подключение к базе данных отсутствует."
-            )
-            return
-        # Получаем введённый номер телефона
-        phone_number = self.number_edit.text()
-
-        # Проверяем телефон в базе данных
-        query = "SELECT * FROM Customers WHERE phone = ?"
-        try:
-            result = self.db_connection.execute(query, (phone_number,)).fetchall()
-        except Exception as e:
-            QMessageBox.critical(
-                None,
-                "Ошибка",
-                "Не удалось выполнить запрос к базе данных"
-            )
-            return
-
-        # Отображение результата
-        if result:
-            if self.open_insert_customer:
-                self.open_insert_customer()
-        else:
-            QMessageBox.warning(
-                None,
-                "Ошибка",
-                f"Телефон {phone_number} отсутствует в базе данных"
-            )
-
 
 
 if __name__ == "__main__":

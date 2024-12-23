@@ -21,7 +21,7 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
         self.setup_auth()
         self.lvl_admin = None
         self.what_to_open = None
-        self.customer_info = []
+        self.customer_info = {}
 
     # ________________________________________НАСТРОЙКА ВИДЖЕТОВ И ИХ СИГНАЛЫ_________________________________
     def setup_auth(self):
@@ -70,7 +70,6 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
 
         # Отображение
         self.insert_customer_window.show()
-
 
     def setup_order_list(self):
         pass
@@ -148,23 +147,27 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
         number = self.phone.number_edit.text()
         pattern = r'^(25|29|33|44|45|46)\d{7}$'
         if re.match(pattern, number):
-            if self.is_number_in_database(number): # Проверяем есть ли номер  в базе и далее проверяем, какое окно открывать
+            if self.is_number_in_database(
+                    number):  # Проверяем есть ли номер  в базе и далее проверяем, какое окно открывать
                 if self.what_to_open == 'orders':
                     self.setup_order_button()
                 elif self.what_to_open == 'customers':
                     self.setup_about()
             else:
                 if self.what_to_open == 'orders':
+                    self.customer_info['number'] = number
                     self.setup_insert_customer()
+                    print(self.customer_info)
                 elif self.what_to_open == 'customers':
                     pass
-                    #тут доделать всплывающее окно КЛИЕНТА НЕТ В БАЗЕ
 
     # Есть ли номер в базе данных
     def is_number_in_database(self, number):
         with self.con:
             info = self.con.execute('SELECT * FROM Customers WHERE phone = ?', (number,))
+            info = info.fetchall()
             return info
+
     #
     def load_products_to_widget(self):
         cursor = self.con.cursor()
