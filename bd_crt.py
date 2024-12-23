@@ -19,7 +19,7 @@ with con:
     con.execute("""
         CREATE TABLE IF NOT EXISTS Customers (
             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-            firs_name VARCHAR(20) NOT NULL,
+            first_name VARCHAR(20) NOT NULL,
             last_name VARCHAR(20) NOT NULL,
             phone VARCHAR(50) NOT NULL,
             notes TEXT
