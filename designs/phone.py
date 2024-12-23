@@ -9,7 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMessageBox #добавил
+
 
 class Ui_phone(object):
     def setupUi(self, phone, db_connection=None): # просто передал подключение к БД

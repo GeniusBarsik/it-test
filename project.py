@@ -14,8 +14,7 @@ from designs.add_products import Ui_ProductEditor as product_editor
 from PyQt5.QtWidgets import QMessageBox
 
 
-class MainApp(auth, about, menu, insert_customer, phone, order_list, order_button, product_button, warehouse_info,
-              product_editor):
+class MainApp(auth, about, menu, insert_customer, phone, order_list, order_button, product_button, warehouse_info, product_editor):
     def __init__(self):
         super().__init__()
         self.con = sl.connect('shop_db')
@@ -150,8 +149,7 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
             number = self.phone.number_edit.text()
             pattern = r'^(25|29|33|44|45|46)\d{7}$'
             if re.match(pattern, number):
-                if self.is_number_in_database(
-                        number):  # Проверяем есть ли номер  в базе и далее проверяем, какое окно открывать
+                if self.is_number_in_database(number):  # Проверяем есть ли номер  в базе и далее проверяем, какое окно открывать
                     if self.what_to_open == 'orders':
                         self.setup_order_button()
                     elif self.what_to_open == 'customers':
@@ -240,7 +238,6 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
 if __name__ == "__main__":
     import sys
     from PyQt5 import QtWidgets
-
     app = QtWidgets.QApplication(sys.argv)
     main_app = MainApp()
     sys.exit(app.exec_())
