@@ -11,17 +11,17 @@ from designs.products_button import Ui_products as product_button
 from designs.warehouse_info import Ui_warehouse_info as warehouse_info
 from designs.orders_button import Ui_orders as order_button
 from designs.add_products import Ui_ProductEditor as product_editor
+from PyQt5.QtWidgets import QMessageBox
 
 
-class MainApp(auth, about, menu, insert_customer, phone, order_list, order_button, product_button, warehouse_info,
-              product_editor):
+class MainApp(auth, about, menu, insert_customer, phone, order_list, order_button, product_button, warehouse_info, product_editor):
     def __init__(self):
         super().__init__()
         self.con = sl.connect('shop_db')
         self.setup_auth()
         self.lvl_admin = None
         self.what_to_open = None
-        self.customer_info = []
+        self.customer_info = {}
 
     # ________________________________________НАСТРОЙКА ВИДЖЕТОВ И ИХ СИГНАЛЫ_________________________________
     def setup_auth(self):
@@ -67,10 +67,9 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
         self.insert_customer.setupUi(self.insert_customer_window)
 
         # Signals
-
+        self.insert_customer.to_order_button.clicked.connect(self.add_customer)
         # Отображение
         self.insert_customer_window.show()
-
 
     def setup_order_list(self):
         pass
@@ -135,36 +134,88 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
 
     # Проверка на наличие USER CODE в DB
     def validate_code(self, code):
-        info = self.con.execute('SELECT * FROM Admins WHERE user_code = ?', (code,))
-        result = info.fetchall()
-        if result:
-            return result[0][2]
-        else:
-            return False
+        with self.con:
+            info = self.con.execute('SELECT * FROM Admins WHERE user_code = ?', (code,))
+            result = info.fetchall()
+            if result:
+                return result[0][2]
+            else:
+                return False
 
     # _________________________________________________________________________________________
     # Валидация номера телефона (правильный или неправильный ввод)
     def phone_validate(self):
-        number = self.phone.number_edit.text()
-        pattern = r'^(25|29|33|44|45|46)\d{7}$'
-        if re.match(pattern, number):
-            if self.is_number_in_database(number): # Проверяем есть ли номер  в базе и далее проверяем, какое окно открывать
-                if self.what_to_open == 'orders':
-                    self.setup_order_button()
-                elif self.what_to_open == 'customers':
-                    self.setup_about()
-            else:
-                if self.what_to_open == 'orders':
-                    self.setup_insert_customer()
-                elif self.what_to_open == 'customers':
-                    pass
-                    #тут доделать всплывающее окно КЛИЕНТА НЕТ В БАЗЕ
+        try:
+            number = self.phone.number_edit.text()
+            pattern = r'^(25|29|33|44|45|46)\d{7}$'
+            if re.match(pattern, number):
+                if self.is_number_in_database(number):  # Проверяем есть ли номер  в базе и далее проверяем, какое окно открывать
+                    if self.what_to_open == 'orders':
+                        self.setup_order_button()
+                    elif self.what_to_open == 'customers':
+                        self.setup_about()
+                else:
+                    if self.what_to_open == 'orders':
+                        self.customer_info['number'] = number
+                        self.setup_insert_customer()
+                        print(self.customer_info)
+                    elif self.what_to_open == 'customers':
+                        pass
+        except Exception as e:
+            print(e)
 
     # Есть ли номер в базе данных
     def is_number_in_database(self, number):
-        with self.con:
-            info = self.con.execute('SELECT * FROM Customers WHERE phone = ?', (number,))
-            return info
+        try:
+            with self.con:
+                info = self.con.execute('SELECT * FROM Customers WHERE phone = ?', (number,))
+                info = info.fetchall()
+                return info
+        except Exception as e:
+            print(e)
+
+    # _________________________________________________________________________________________________
+    # Добавление клиента
+    def add_customer(self):
+        try:
+            name = self.insert_customer.name_edit.text()
+            lastname = self.insert_customer.lastname_edit.text()
+            note = self.insert_customer.notes_edit.toPlainText()
+            phone = self.customer_info['number']
+            if not (name or lastname):
+                self.msg_box("critical")
+            else:
+                self.customer_info['name'] = name
+                self.customer_info['lastname'] = lastname
+                if not note:
+                    self.customer_info['notes'] = ''
+                else:
+                    self.customer_info['notes'] = note
+
+                with self.con:
+                    self.con.execute('INSERT INTO Customers (first_name, last_name, phone, notes) VALUES (?, ?, ?, ?)',
+                                     (name, lastname, phone, note))
+                    self.msg_box("ok")
+        except Exception as e:
+            print(e)
+
+    # Msg box
+    def msg_box(self, type_):
+        msg = QMessageBox()
+        if type_ == "critical":
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("Заполните обязательные поля!")
+            msg.setWindowTitle("Ошибка")
+            msg.setInformativeText("Пожалуйста, проверьте ваши данные.")
+        else:
+            msg.setWindowTitle("Действие")
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("Данные успешно добавлены")
+
+        msg.setStandardButtons(QMessageBox.Ok)
+
+        # Отображаем окно и ждем, пока пользователь его закроет
+        msg.exec_()
     #
     def load_products_to_widget(self):
         cursor = self.con.cursor()
@@ -187,7 +238,6 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
 if __name__ == "__main__":
     import sys
     from PyQt5 import QtWidgets
-
     app = QtWidgets.QApplication(sys.argv)
     main_app = MainApp()
     sys.exit(app.exec_())
