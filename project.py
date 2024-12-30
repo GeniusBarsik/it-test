@@ -72,7 +72,13 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
         self.insert_customer_window.show()
 
     def setup_order_list(self):
-        pass
+        # Открытие окна insert_customer
+        self.order_list_window = QtWidgets.QMainWindow()
+        self.order_list = order_list()
+        self.order_list.setupUi(self.order_list_window)
+
+        # Signals
+        self.order_list_window.show()
 
     # изменил
     def setup_order_button(self):
@@ -130,7 +136,8 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
             self.authorization_window.close()
             self.setup_menu()
         else:
-            print('Мимо')
+            self.authorization.lineEdit.clear()
+            self.msg_box('number_error')
 
     # Проверка на наличие USER CODE в DB
     def validate_code(self, code):
@@ -151,7 +158,8 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
             if re.match(pattern, number):
                 if self.is_number_in_database(number):  # Проверяем есть ли номер  в базе и далее проверяем, какое окно открывать
                     if self.what_to_open == 'orders':
-                        self.setup_order_button()
+                        self.phone_window.close()
+                        self.setup_order_list()
                     elif self.what_to_open == 'customers':
                         self.setup_about()
                 else:
@@ -161,6 +169,9 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
                         print(self.customer_info)
                     elif self.what_to_open == 'customers':
                         pass
+            else:
+                self.phone.number_edit.clear()
+                self.msg_box("not_correct_phone")
         except Exception as e:
             print(e)
 
@@ -182,7 +193,7 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
             lastname = self.insert_customer.lastname_edit.text()
             note = self.insert_customer.notes_edit.toPlainText()
             phone = self.customer_info['number']
-            if not (name or lastname):
+            if not name or not lastname:
                 self.msg_box("critical")
             else:
                 self.customer_info['name'] = name
@@ -199,6 +210,7 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
         except Exception as e:
             print(e)
 
+
     # Msg box
     def msg_box(self, type_):
         msg = QMessageBox()
@@ -207,16 +219,25 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
             msg.setText("Заполните обязательные поля!")
             msg.setWindowTitle("Ошибка")
             msg.setInformativeText("Пожалуйста, проверьте ваши данные.")
-        else:
+        elif type_ == "ok":
             msg.setWindowTitle("Действие")
             msg.setIcon(QMessageBox.Information)
             msg.setText("Данные успешно добавлены")
+        elif type_ == "number_error":
+            msg.setWindowTitle("Действие")
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("Такого кода администратора не существует")
+        elif type_ == "not_correct_phone":
+            msg.setWindowTitle("Неверный формат")
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("Введенный номер телефона не соответствует формату")
 
         msg.setStandardButtons(QMessageBox.Ok)
 
         # Отображаем окно и ждем, пока пользователь его закроет
         msg.exec_()
-    #
+
+
     def load_products_to_widget(self):
         cursor = self.con.cursor()
 
