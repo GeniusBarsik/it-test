@@ -39,11 +39,11 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
         self.menu_window = QtWidgets.QMainWindow()
         self.main_menu = menu()
         self.main_menu.setupUi(self.menu_window)
-
+        self.what_to_open = "customers"
         # signals
         self.main_menu.product.clicked.connect(self.setup_product_button)
         self.main_menu.available.clicked.connect(self.setup_warehouse_info)
-        self.main_menu.customer.clicked.connect(self.setup_about)
+        self.main_menu.customer.clicked.connect(self.setup_phone)
         self.main_menu.order.clicked.connect(self.setup_order_button)
         # нужно добавить админы НЕ УДАЛЯТЬ!
 
@@ -54,7 +54,9 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
         self.about_window = QtWidgets.QMainWindow()
         self.about_customer = about()
         self.about_customer.setupUi(self.about_window)
-
+        self.about_customer.firstname.setText(self.customer_info['firstname'])
+        self.about_customer.lastname.setText(self.customer_info['lastname'])
+        self.about_customer.number.setText(self.customer_info['number'])
         # signals
 
         # Отображение
@@ -78,6 +80,9 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
         self.order_list.setupUi(self.order_list_window)
 
         # Signals
+        self.order_list.customer_info_button.clicked.connect(self.setup_about)
+
+        # Отображение
         self.order_list_window.show()
 
     # изменил
@@ -156,7 +161,9 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
             number = self.phone.number_edit.text()
             pattern = r'^(25|29|33|44|45|46)\d{7}$'
             if re.match(pattern, number):
-                if self.is_number_in_database(number):  # Проверяем есть ли номер  в базе и далее проверяем, какое окно открывать
+                self.customer_info['number'] = number
+                if self.is_number_in_database(number):
+                    self.load_customer_info(number)
                     if self.what_to_open == 'orders':
                         self.phone_window.close()
                         self.setup_order_list()
@@ -164,7 +171,6 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
                         self.setup_about()
                 else:
                     if self.what_to_open == 'orders':
-                        self.customer_info['number'] = number
                         self.setup_insert_customer()
                         print(self.customer_info)
                     elif self.what_to_open == 'customers':
@@ -186,17 +192,25 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
             print(e)
 
     # _________________________________________________________________________________________________
+    # Загрузка данных о клиенте в класс
+    def load_customer_info(self, number):
+        with self.con:
+            info = self.con.execute('SELECT * FROM Customers WHERE phone = ?', (number,))
+            info = info.fetchall()
+            self.customer_info['firstname'] = info[0][1]
+            self.customer_info['lastname'] = info[0][2]
+            print(self.customer_info)
     # Добавление клиента
     def add_customer(self):
         try:
-            name = self.insert_customer.name_edit.text()
+            firstname = self.insert_customer.name_edit.text()
             lastname = self.insert_customer.lastname_edit.text()
             note = self.insert_customer.notes_edit.toPlainText()
             phone = self.customer_info['number']
-            if not name or not lastname:
+            if not firstname or not lastname:
                 self.msg_box("critical")
             else:
-                self.customer_info['name'] = name
+                self.customer_info['firstname'] = firstname
                 self.customer_info['lastname'] = lastname
                 if not note:
                     self.customer_info['notes'] = ''
@@ -205,8 +219,10 @@ class MainApp(auth, about, menu, insert_customer, phone, order_list, order_butto
 
                 with self.con:
                     self.con.execute('INSERT INTO Customers (first_name, last_name, phone, notes) VALUES (?, ?, ?, ?)',
-                                     (name, lastname, phone, note))
+                                     (firstname, lastname, phone, note))
                     self.msg_box("ok")
+
+
         except Exception as e:
             print(e)
 
