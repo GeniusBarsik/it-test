@@ -191,7 +191,6 @@ class CustomerForm(QtWidgets.QMainWindow, Ui_CustomerForm):
         phone = self.phone_line_edit.text()
         notes = self.notes_text_edit.toPlainText()
 
-
         if not validation.validate_name(name):
             self.name_line_edit.clear()
         elif not validation.validate_lastname(lastname):
@@ -209,6 +208,7 @@ class CustomerForm(QtWidgets.QMainWindow, Ui_CustomerForm):
                 self.create_order = CreateOrder(phone)
                 self.create_order.show()
 
+
 # Меню составления заказа
 class CreateOrder(QtWidgets.QMainWindow, Ui_OrderCreate):
     def __init__(self, phone):
@@ -216,6 +216,7 @@ class CreateOrder(QtWidgets.QMainWindow, Ui_OrderCreate):
         self.setupUi(self)
         self.phone = phone
         # signals
+
 
 # Форма заполнения продукта
 class ProductForm(QtWidgets.QMainWindow, Ui_ProductForm):
@@ -226,7 +227,7 @@ class ProductForm(QtWidgets.QMainWindow, Ui_ProductForm):
         # signals
 
 
-app = QtWidgets.QApplication(sys.argv)  # Создаем экземпляр QApplication
-a = AuthWindow() # Создаем окно авторизации
-a.show()  # Показываем окно
+app = QtWidgets.QApplication(sys.argv)
+a = AuthWindow()
+a.show()
 sys.exit(app.exec_())
