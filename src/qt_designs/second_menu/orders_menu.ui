@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>OrdersMenu</class>
+ <widget class="QMainWindow" name="OrdersMenu">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>438</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Менеджер заказов</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QPushButton" name="add_order_button">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>141</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 10pt &quot;Segoe UI&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Добавить заказ</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="remove_order_button">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>70</y>
+      <width>141</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 10pt &quot;Segoe UI&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Удалить заказ</string>
+    </property>
+   </widget>
+   <widget class="QTableWidget" name="orders_table_widget">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>10</y>
+      <width>621</width>
+      <height>371</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>400</y>
+      <width>131</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 10pt &quot;MS Shell Dlg 2&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Отсортировать по:</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="sort_info_box">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>400</y>
+      <width>111</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>Номер заказа</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Имя клиента</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Дата</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QPushButton" name="change_order_button">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>130</y>
+      <width>141</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 9pt &quot;Segoe UI&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Изменить заказ</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
