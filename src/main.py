@@ -149,21 +149,19 @@ class PhoneInput(QtWidgets.QMainWindow, Ui_PhoneInput):
                     self.customer_info.show()
 
             elif self.to_open == "orders":
+                self.create_order.show()
                 self.phone_line_edit.clear()
                 self.close()
-                self.create_order.show()
+
         else:
             print("ok3")
             if self.to_open == "customers":
                 message.show_err_info("Такого клиента не существует")
-            try:
-                elif self.to_open == "orders":
-                    self.customer_form = CustomerForm("orders", phone_number=phone)
-                    self.phone_line_edit.clear()
-                    self.close()
-                    self.customer_form.show()
-            except Exception as e:
-                message
+            elif self.to_open == "orders":
+                self.customer_form = CustomerForm("orders", phone_number=phone)
+                self.phone_line_edit.clear()
+                self.close()
+                self.customer_form.show()
 
 
 # Форма заполнения информации о клиенте
@@ -181,7 +179,7 @@ class CustomerForm(QtWidgets.QMainWindow, Ui_CustomerForm):
         self.phone_line_edit.setText(self.phone)
 
         # signals
-        self.add_or_change_button.clicked.connect(self.add_customer)
+        self.add_or_change_button.clicked.connect(self.add_or_change_customer)
 
     def add_or_change_customer(self):
         name = self.name_line_edit.text()
