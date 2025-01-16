@@ -121,7 +121,7 @@ class PhoneInput(QtWidgets.QMainWindow, Ui_PhoneInput):
         # сlasses
         self.customer_form = None
         self.customer_info = None
-        self.create_order = CreateOrder()
+        self.create_order = None
 
         self.to_open = info
 
@@ -149,6 +149,7 @@ class PhoneInput(QtWidgets.QMainWindow, Ui_PhoneInput):
                     self.customer_info.show()
 
             elif self.to_open == "orders":
+                self.create_order = CreateOrder(phone)
                 self.create_order.show()
                 self.phone_line_edit.clear()
                 self.close()
@@ -169,6 +170,9 @@ class CustomerForm(QtWidgets.QMainWindow, Ui_CustomerForm):
     def __init__(self, step, phone_number="", name_customer="", lastname_customer="", notes_customer=""):
         super().__init__()
         self.setupUi(self)
+        # classes
+        self.create_order = None
+
         self.step = step
         self.phone = phone_number
         self.name = name_customer
@@ -187,6 +191,7 @@ class CustomerForm(QtWidgets.QMainWindow, Ui_CustomerForm):
         phone = self.phone_line_edit.text()
         notes = self.notes_text_edit.toPlainText()
 
+
         if not validation.validate_name(name):
             self.name_line_edit.clear()
         elif not validation.validate_lastname(lastname):
@@ -200,14 +205,16 @@ class CustomerForm(QtWidgets.QMainWindow, Ui_CustomerForm):
                 self.lastname_line_edit.clear()
                 self.phone_line_edit.clear()
                 self.notes_text_edit.clear()
-
+                self.close()
+                self.create_order = CreateOrder(phone)
+                self.create_order.show()
 
 # Меню составления заказа
 class CreateOrder(QtWidgets.QMainWindow, Ui_OrderCreate):
-    def __init__(self):
+    def __init__(self, phone):
         super().__init__()
         self.setupUi(self)
-
+        self.phone = phone
         # signals
 
 # Форма заполнения продукта
