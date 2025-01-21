@@ -115,17 +115,26 @@ class DataBase:
         message.show_err_info("Клиента с данным номером телефона нет в базе данных")
         return False
 
-    def take_info_from_bd(*args):
-        ln = len(args)
-        answ = ", ".join(["?" for _ in range(ln)])
+    def take_info_from_bd(self, table_name, widget, *args):
         params = ", ".join([el for el in args])
-        print(f"{answ}\n{params}")
+        with self.conn:
+            print(params)
+            info = self.conn.execute(f"SELECT {params} FROM {table_name}").fetchall()
+            print(info)
+            return info
+
+    def take_column_names(self, table_name):
+        names = self.conn.execute(f"PRAGMA table_info({table_name})").fetchall()
+        names = [col[1] for col in names]
+        return names
 
     def add_product_to_bd(self, category, name, price, sku, expiry_date, image_url, features):
         with self.conn:
             self.conn.execute("INSERT INTO Products (category, name, price, SKU, expiry_date, image_url, features) "
                               "VALUES (?, ?, ?, ?, ?, ?, ?)", (category, name, price, sku, expiry_date, image_url, features))
+
             message.show_ok_info("Продукт добавлен")
+
 '''
     def change_customer_in_db(self, name, lastname, phone, notes):
         with self.conn:
@@ -140,4 +149,4 @@ db = DataBase("Shop_info")
 
 
 if __name__ == '__main__':
-    db.take_info_from_bd("lastname", "pr")
+    db.take_info_from_bd("Products", "*")

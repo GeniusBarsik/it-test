@@ -11,6 +11,7 @@ from qt_interfaces.forms.product_form import Ui_ProductForm
 from database.db_methods import db
 from src.models.message_box import message
 from models.help_methods import validation
+from models.help_methods import widget_operation
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -107,6 +108,12 @@ class ProductMenu(QtWidgets.QMainWindow, Ui_ProductMenu):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        info = db.take_info_from_bd("Products", self.products_table_widget, "*")
+        try:
+            widget_operation.load_info_to_table_widget(info, self.products_table_widget)
+            self.products_table_widget.setHorizontalHeaderLabels(db.take_column_names("Products"))
+        except Exception as e:
+            print(e)
 
         # Создание экземпляра класса для отображения формы заполнения информации о продукте
         self.product_form = ProductForm()
