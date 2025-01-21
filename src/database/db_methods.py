@@ -89,6 +89,14 @@ class DataBase:
                 return True
             return False
 
+    def is_product_in_db(self, sku):
+        with self.conn:
+            info = self.conn.execute("SELECT id FROM Products WHERE sku = ?", (sku,)).fetchall()
+            print(info)
+            if info:
+                return True
+            return False
+
     def add_customer_to_db(self, name, lastname, phone, notes=""):
         with self.conn:
             try:
@@ -112,6 +120,12 @@ class DataBase:
         answ = ", ".join(["?" for _ in range(ln)])
         params = ", ".join([el for el in args])
         print(f"{answ}\n{params}")
+
+    def add_product_to_bd(self, category, name, price, sku, expiry_date, image_url, features):
+        with self.conn:
+            self.conn.execute("INSERT INTO Products (category, name, price, SKU, expiry_date, image_url, features) "
+                              "VALUES (?, ?, ?, ?, ?, ?, ?)", (category, name, price, sku, expiry_date, image_url, features))
+            message.show_ok_info("Продукт добавлен")
 '''
     def change_customer_in_db(self, name, lastname, phone, notes):
         with self.conn:
@@ -119,12 +133,8 @@ class DataBase:
                               "SET name = ?, lastname = ?, phone = ?, notes = ? "
                               "WHERE phone = ?", (name, lastname, phone, notes))
         message.show_ok_info(f"Данные клиента: {name} успешно изменены")
-
-    def add_product_to_bd(self, category, name, price, sku, expiry_date, image_url, features):
-        with self.conn:
-            self.conn.execute("INSERT INTO Products (category, name, price, SKU, expiry_date, image_url, features) "
-                              "VALUES (?, ?, ?, ?, ?, ?, ?)", (category, name, price, sku, expiry_date, image_url, features))
 '''
+
 db = DataBase("Shop_info")
 
 

@@ -98,7 +98,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>270</y>
+      <y>310</y>
       <width>121</width>
       <height>16</height>
      </rect>
@@ -157,9 +157,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>290</y>
+      <y>330</y>
       <width>211</width>
-      <height>131</height>
+      <height>91</height>
      </rect>
     </property>
     <property name="placeholderText">
@@ -190,6 +190,35 @@
     </property>
     <property name="text">
      <string>Цена:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_9">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>260</y>
+      <width>201</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 10pt &quot;Segoe UI&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Изображение продукта (URL)</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="image_url_line_edit">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>280</y>
+      <width>211</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="placeholderText">
+     <string>*необязательное поле</string>
     </property>
    </widget>
   </widget>

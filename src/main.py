@@ -345,23 +345,38 @@ class ProductForm(QtWidgets.QMainWindow, Ui_ProductForm):
         self.add_or_change_button.clicked.connect(self.add_or_change_product)
 
     def add_or_change_product(self):
-        name = self.product_name_line_edit.text()
-        price = self.product_price_line_edit.text()
-        sku = self.sku_line_edit.text()
-        category = self.category_line_edit.text()
-        expiry_date = self.expire_date_line_edit.text()
-        product_chars = self.textEdit.toPlainText()
+        name = self.product_name_line_edit.text().strip()
+        price = self.product_price_line_edit.text().strip()
+        sku = self.sku_line_edit.text().strip()
+        category = self.category_line_edit.text().strip()
+        image_url = self.image_url_line_edit.text().strip()
+        expiry_date = self.expire_date_line_edit.text().strip()
+        features = self.textEdit.toPlainText().strip()
 
-        required_keys = (name, sku, category, expiry_date, price)
+        required_keys = (name, sku, category, price)
 
         if "" not in required_keys:
 
-            if 4 == len([el for el in required_keys[:-1] if len(el) > 3]):
-                pass
+            if 3 == len([el for el in required_keys[:-1] if len(el) > 3]):
+                print(category, name, price, sku, expiry_date, image_url, features)
+                if not db.is_product_in_db(sku):
+                    db.add_product_to_bd(category, name, price, sku, expiry_date, image_url, features)
+                    self.product_name_line_edit.clear()
+                    self.product_price_line_edit.clear()
+                    self.sku_line_edit.clear()
+                    self.category_line_edit.clear()
+                    self.image_url_line_edit.clear()
+                    self.expire_date_line_edit.clear()
+                    self.product_price_line_edit.clear()
+                    self.close()
+                else:
+                    message.show_err_info("Продукт с данным SKU уже есть в базе данных")
             else:
                 message.show_err_info("Поле должно содержать больше 3 элементов")
         else:
+            print(required_keys)
             message.show_err_info("Заполните обязательные поля")
+
 
 app = QtWidgets.QApplication(sys.argv)
 a = AuthWindow()

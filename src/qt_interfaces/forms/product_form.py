@@ -38,7 +38,7 @@ class Ui_ProductForm(object):
         self.label_6.setStyleSheet("font: 10pt \"Segoe UI\";")
         self.label_6.setObjectName("label_6")
         self.label_7 = QtWidgets.QLabel(self.centralwidget)
-        self.label_7.setGeometry(QtCore.QRect(20, 270, 121, 16))
+        self.label_7.setGeometry(QtCore.QRect(20, 310, 121, 16))
         self.label_7.setStyleSheet("font: 10pt \"Segoe UI\";")
         self.label_7.setObjectName("label_7")
         self.category_line_edit = QtWidgets.QLineEdit(self.centralwidget)
@@ -54,7 +54,7 @@ class Ui_ProductForm(object):
         self.expire_date_line_edit.setGeometry(QtCore.QRect(20, 230, 211, 20))
         self.expire_date_line_edit.setObjectName("expire_date_line_edit")
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEdit.setGeometry(QtCore.QRect(20, 290, 211, 131))
+        self.textEdit.setGeometry(QtCore.QRect(20, 330, 211, 91))
         self.textEdit.setObjectName("textEdit")
         self.product_price_line_edit = QtWidgets.QLineEdit(self.centralwidget)
         self.product_price_line_edit.setGeometry(QtCore.QRect(20, 180, 211, 20))
@@ -63,6 +63,13 @@ class Ui_ProductForm(object):
         self.label_8.setGeometry(QtCore.QRect(20, 160, 191, 16))
         self.label_8.setStyleSheet("font: 10pt \"Segoe UI\";")
         self.label_8.setObjectName("label_8")
+        self.label_9 = QtWidgets.QLabel(self.centralwidget)
+        self.label_9.setGeometry(QtCore.QRect(20, 260, 201, 16))
+        self.label_9.setStyleSheet("font: 10pt \"Segoe UI\";")
+        self.label_9.setObjectName("label_9")
+        self.image_url_line_edit = QtWidgets.QLineEdit(self.centralwidget)
+        self.image_url_line_edit.setGeometry(QtCore.QRect(20, 280, 211, 20))
+        self.image_url_line_edit.setObjectName("image_url_line_edit")
         ProductForm.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(ProductForm)
@@ -80,3 +87,15 @@ class Ui_ProductForm(object):
         self.expire_date_line_edit.setPlaceholderText(_translate("ProductForm", "*необязательное поле"))
         self.textEdit.setPlaceholderText(_translate("ProductForm", "*необязательное поле"))
         self.label_8.setText(_translate("ProductForm", "Цена:"))
+        self.label_9.setText(_translate("ProductForm", "Изображение продукта (URL)"))
+        self.image_url_line_edit.setPlaceholderText(_translate("ProductForm", "*необязательное поле"))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    ProductForm = QtWidgets.QMainWindow()
+    ui = Ui_ProductForm()
+    ui.setupUi(ProductForm)
+    ProductForm.show()
+    sys.exit(app.exec_())
