@@ -106,6 +106,12 @@ class DataBase:
             return info[0][0], info[0][1], info[0][2], info[0][3]
         message.show_err_info("Клиента с данным номером телефона нет в базе данных")
         return False
+
+    def take_info_from_bd(*args):
+        ln = len(args)
+        answ = ", ".join(["?" for _ in range(ln)])
+        params = ", ".join([el for el in args])
+        print(f"{answ}\n{params}")
 '''
     def change_customer_in_db(self, name, lastname, phone, notes):
         with self.conn:
@@ -122,5 +128,6 @@ class DataBase:
 db = DataBase("Shop_info")
 
 
+
 if __name__ == '__main__':
-    print(db.select_customer("+375336193565"))
+    db.take_info_from_bd("lastname", "pr")

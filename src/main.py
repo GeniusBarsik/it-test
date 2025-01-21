@@ -116,6 +116,7 @@ class ProductMenu(QtWidgets.QMainWindow, Ui_ProductMenu):
         # self.remove_product_button.clicked.connect()
         # self.edit_product_button.clicked.connect()
         # self.search_by_name_button.clicked.connect()
+        # self.products_table_widget
 
     def manage_product(self):
         """
@@ -341,7 +342,26 @@ class ProductForm(QtWidgets.QMainWindow, Ui_ProductForm):
         self.setupUi(self)
 
         # Подключение сигналов
+        self.add_or_change_button.clicked.connect(self.add_or_change_product)
 
+    def add_or_change_product(self):
+        name = self.product_name_line_edit.text()
+        price = self.product_price_line_edit.text()
+        sku = self.sku_line_edit.text()
+        category = self.category_line_edit.text()
+        expiry_date = self.expire_date_line_edit.text()
+        product_chars = self.textEdit.toPlainText()
+
+        required_keys = (name, sku, category, expiry_date, price)
+
+        if "" not in required_keys:
+
+            if 4 == len([el for el in required_keys[:-1] if len(el) > 3]):
+                pass
+            else:
+                message.show_err_info("Поле должно содержать больше 3 элементов")
+        else:
+            message.show_err_info("Заполните обязательные поля")
 
 app = QtWidgets.QApplication(sys.argv)
 a = AuthWindow()
