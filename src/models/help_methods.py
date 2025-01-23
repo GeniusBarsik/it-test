@@ -1,4 +1,7 @@
 import re
+
+from PyQt5.QtCore import Qt
+
 from src.models.message_box import message
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, QPushButton
 
@@ -43,8 +46,9 @@ class WidgetOperations:
 
         for row_index, row_data in enumerate(info):
             for column_index, item in enumerate(row_data):
-                widget.setItem(row_index, column_index, QTableWidgetItem(str(item)))
-
+                item_widget = QTableWidgetItem(str(item))
+                item_widget.setFlags(item_widget.flags() & ~Qt.ItemIsEditable)  # Заблокировать редактирование
+                widget.setItem(row_index, column_index, item_widget)
 
 widget_operation = WidgetOperations()
 validation = HelpMethod()
