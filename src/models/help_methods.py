@@ -2,6 +2,7 @@ import re
 from src.models.message_box import message
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, QPushButton
 
+
 class HelpMethod:
     def validate_num(self, num):
         try:
@@ -33,8 +34,7 @@ class HelpMethod:
         return True
 
 
-
-class LoadToWidget:
+class WidgetOperations:
     def load_info_to_table_widget(self, info, widget):
 
         print(info)
@@ -45,5 +45,6 @@ class LoadToWidget:
             for column_index, item in enumerate(row_data):
                 widget.setItem(row_index, column_index, QTableWidgetItem(str(item)))
 
-widget_operation = LoadToWidget()
+
+widget_operation = WidgetOperations()
 validation = HelpMethod()

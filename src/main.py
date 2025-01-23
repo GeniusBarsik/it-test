@@ -19,6 +19,9 @@ import sys
 
 
 class AuthWindow(QtWidgets.QMainWindow, Ui_Authorization):
+    """
+    Меню авторизации.
+    """
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -224,12 +227,10 @@ class PhoneInput(QtWidgets.QMainWindow, Ui_PhoneInput):
         """
         phone = self.phone_line_edit.text()
         phone = "".join(phone.split())
-        print("ok")
         if not validation.validate_num(phone):
             self.phone_line_edit.clear()
 
         elif db.is_customer_in_db(phone):
-            print("ok33")
             if self.to_open == "customers":
                 self.phone_line_edit.clear()
                 self.close()
@@ -248,7 +249,6 @@ class PhoneInput(QtWidgets.QMainWindow, Ui_PhoneInput):
                 self.close()
 
         else:
-            print("ok3")
             if self.to_open == "customers":
                 message.show_err_info("Такого клиента не существует")
             elif self.to_open == "orders":
