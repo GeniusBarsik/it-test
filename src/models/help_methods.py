@@ -40,7 +40,6 @@ class HelpMethod:
 class WidgetOperations:
     def load_info_to_table_widget(self, info, widget):
 
-        print(info)
         widget.setRowCount(len(info))
         widget.setColumnCount(len(info[0]) if info else 0)
 

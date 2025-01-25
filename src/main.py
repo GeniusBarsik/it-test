@@ -13,7 +13,7 @@ from src.models.message_box import message
 from models.help_methods import validation
 from models.help_methods import widget_operation
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtWidgets  # QtCore, QtGui
 
 import sys
 
@@ -75,6 +75,8 @@ class MainMenu(QtWidgets.QMainWindow, Ui_Menu):
         self.products_button.clicked.connect(self.show_products_menu)
         self.orders_button.clicked.connect(self.show_orders_menu)
         self.customers_button.clicked.connect(self.show_customer_info)
+        # self.warehouses_button
+        # self.admins_button
 
     def show_products_menu(self):
         """
@@ -111,9 +113,9 @@ class ProductMenu(QtWidgets.QMainWindow, Ui_ProductMenu):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        info = db.take_info_from_bd("Products", self.products_table_widget, "*")
+        self.info = db.take_info_from_bd("Products", self.products_table_widget, "*")
         try:
-            widget_operation.load_info_to_table_widget(info, self.products_table_widget)
+            widget_operation.load_info_to_table_widget(self.info, self.products_table_widget)
             self.products_table_widget.setHorizontalHeaderLabels(db.take_column_names("Products"))
         except Exception as e:
             print(e)
@@ -123,16 +125,39 @@ class ProductMenu(QtWidgets.QMainWindow, Ui_ProductMenu):
 
         # Подключение сигналов
         self.add_new_product_button.clicked.connect(self.manage_product)
-        # self.remove_product_button.clicked.connect()
+        self.remove_product_button.clicked.connect(self.remove_product)
         # self.edit_product_button.clicked.connect()
         # self.search_by_name_button.clicked.connect()
         # self.products_table_widget
+        # self.sort_combo_box(self.to_sort_combo)
+        self.refresh_button.clicked.connect(self.reload_widget)
 
     def manage_product(self):
         """
         Открывает форму для добавления, редактирования или удаления продукта.
         """
         self.product_form.show()
+
+    def remove_product(self):
+        if not self.products_table_widget.selectedItems():
+            message.show_ok_info("Выберите продукт для удаления")
+        else:
+            self.info = db.take_info_from_bd("Products", self.products_table_widget, "*")
+            row = self.products_table_widget.currentRow()
+            name = (self.info[row])[2]
+            to_del = (self.info[row])[4]
+            db.delete_from_db("Products", to_del)
+            self.products_table_widget.clearSelection()
+            self.reload_widget()
+            message.show_ok_info(f"Продукт {name} удален")
+
+    def reload_widget(self):
+        """
+        Обновляет виджет
+        """
+        self.info = db.take_info_from_bd("Products", self.products_table_widget, "*")
+        widget_operation.load_info_to_table_widget(self.info, self.products_table_widget)
+        self.products_table_widget.setHorizontalHeaderLabels(db.take_column_names("Products"))
 
 
 class OrdersMenu(QtWidgets.QMainWindow, Ui_OrdersMenu):

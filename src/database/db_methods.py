@@ -120,7 +120,6 @@ class DataBase:
         with self.conn:
             print(params)
             info = self.conn.execute(f"SELECT {params} FROM {table_name}").fetchall()
-            print(info)
             return info
 
     def take_column_names(self, table_name):
@@ -134,6 +133,13 @@ class DataBase:
                               "VALUES (?, ?, ?, ?, ?, ?, ?)", (category, name, price, sku, expiry_date, image_url, features))
 
             message.show_ok_info("Продукт добавлен")
+
+    def delete_from_db(self, table_name, item):
+        try:
+            with self.conn:
+                self.conn.execute(f"DELETE FROM {table_name} WHERE SKU = ?", (item,))
+        except Exception as e:
+            print(e)
 
 '''
     def change_customer_in_db(self, name, lastname, phone, notes):
@@ -149,4 +155,4 @@ db = DataBase("Shop_info")
 
 
 if __name__ == '__main__':
-    db.take_info_from_bd("Products", "*")
+    db.delete_from_db("Products", 1)

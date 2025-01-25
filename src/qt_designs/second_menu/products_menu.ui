@@ -85,8 +85,7 @@
      <string notr="true">font: 10pt &quot;Segoe UI&quot;;</string>
     </property>
     <property name="text">
-     <string>Поиск по
- названию</string>
+     <string>Поиск по SKU</string>
     </property>
    </widget>
    <widget class="QComboBox" name="sort_combo_box">
@@ -125,6 +124,22 @@
     </property>
     <property name="text">
      <string>Сортировать по:</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="refresh_button">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>250</y>
+      <width>121</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 10pt &quot;Segoe UI&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Обновить</string>
     </property>
    </widget>
   </widget>

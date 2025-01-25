@@ -47,6 +47,10 @@ class Ui_ProductMenu(object):
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(150, 360, 111, 16))
         self.label.setObjectName("label")
+        self.refresh_button = QtWidgets.QPushButton(self.centralwidget)
+        self.refresh_button.setGeometry(QtCore.QRect(10, 250, 121, 41))
+        self.refresh_button.setStyleSheet("font: 10pt \"Segoe UI\";")
+        self.refresh_button.setObjectName("refresh_button")
         ProductMenu.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(ProductMenu)
@@ -58,9 +62,19 @@ class Ui_ProductMenu(object):
         self.add_new_product_button.setText(_translate("ProductMenu", "Добавить продукт"))
         self.remove_product_button.setText(_translate("ProductMenu", "Удалить продукт"))
         self.edit_product_button.setText(_translate("ProductMenu", "Изменить продукт"))
-        self.search_by_name_button.setText(_translate("ProductMenu", "Поиск по\n"
-" названию"))
+        self.search_by_name_button.setText(_translate("ProductMenu", "Поиск по SKU"))
         self.sort_combo_box.setItemText(0, _translate("ProductMenu", "Название"))
         self.sort_combo_box.setItemText(1, _translate("ProductMenu", "Номер товара"))
         self.sort_combo_box.setItemText(2, _translate("ProductMenu", "Название(обратный порядок)"))
         self.label.setText(_translate("ProductMenu", "Сортировать по:"))
+        self.refresh_button.setText(_translate("ProductMenu", "Обновить"))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    ProductMenu = QtWidgets.QMainWindow()
+    ui = Ui_ProductMenu()
+    ui.setupUi(ProductMenu)
+    ProductMenu.show()
+    sys.exit(app.exec_())
