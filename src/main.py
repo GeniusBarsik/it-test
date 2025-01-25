@@ -156,18 +156,18 @@ class ProductMenu(QtWidgets.QMainWindow, Ui_ProductMenu):
         """
         Изменяет продукт в базе данных и обновляет TableWidget
         """
-        self.product_form = ProductForm("edit_product")
-        # if not self.products_table_widget.selectedItems():
-        #     message.show_ok_info("Выберите продукт для изменения")
-        # else:
-        #     self.info = db.take_info_from_bd("Products", self.products_table_widget, "*")
-        #     row = self.products_table_widget.currentRow()
-        #     name = (self.info[row])[2]
-        #     to_change = (self.info[row])[4]
-        #     db.delete_from_db("Products", to_change)
-        #     self.products_table_widget.clearSelection()
-        #     self.reload_widget()
-        #     message.show_ok_info(f"Продукт {name} удален")
+        if not self.products_table_widget.selectedItems():
+            message.show_ok_info("Выберите продукт для изменения")
+        else:
+            self.info = db.take_info_from_bd("Products", self.products_table_widget, "*")
+            row = self.products_table_widget.currentRow()
+            _, category, name, price, sku, expiry_date, image_url, features = self.info[row]
+            price = str(price)
+            try:
+                self.product_form = ProductForm("edit_product", name, price, sku, category, image_url, expiry_date, features)
+            except Exception as e:
+                print(e)
+            self.product_form.show()
 
     def reload_widget(self):
         """
@@ -387,19 +387,27 @@ class ProductForm(QtWidgets.QMainWindow, Ui_ProductForm):
     Этот класс предоставляет интерфейс для добавления или редактирования
     информации о продукте, включая название, цену и описание.
     """
-    def __init__(self, operation):
+    def __init__(self, operation, name='', price='', sku='', category='', image_url='', expiry_date='', features=''):
         super().__init__()
         self.setupUi(self)
-        self.operation = operation
+        self.operation = operation  # Какая проходка в данный момент
+
+        # Выгрузка информации о продукте в LineEdit
+        self.product_name_line_edit.setText(name)
+        self.product_price_line_edit.setText(price)
+        self.sku_line_edit.setText(sku)
+        self.category_line_edit.setText(category)
+        self.image_url_line_edit.setText(image_url)
+        self.expire_date_line_edit.setText(expiry_date)
+        self.textEdit.setText(features)
+
+        # sku
+        self.sku_to_check = sku
 
         # Подключение сигналов
-        if self.operation == 'add_product':
-            self.add_or_change_button.clicked.connect(self.add_or_change_product)
-        # elif self.operation == 'edit_product':
-        #     self.add
+        self.add_or_change_button.clicked.connect(self.add_or_edit_product)
 
-
-    def add_or_change_product(self):
+    def add_or_edit_product(self):
         name = self.product_name_line_edit.text().strip()
         price = self.product_price_line_edit.text().strip()
         sku = self.sku_line_edit.text().strip()
@@ -414,7 +422,7 @@ class ProductForm(QtWidgets.QMainWindow, Ui_ProductForm):
 
             if 3 == len([el for el in required_keys[:-1] if len(el) > 3]):
                 print(category, name, price, sku, expiry_date, image_url, features)
-                if not db.is_product_in_db(sku):
+                if self.operation == "add_product" and not db.is_product_in_db(sku):
                     db.add_product_to_bd(category, name, price, sku, expiry_date, image_url, features)
                     self.product_name_line_edit.clear()
                     self.product_price_line_edit.clear()
@@ -424,6 +432,23 @@ class ProductForm(QtWidgets.QMainWindow, Ui_ProductForm):
                     self.expire_date_line_edit.clear()
                     self.product_price_line_edit.clear()
                     self.close()
+
+                elif self.operation == "edit_product":
+                    print(sku, self.sku_line_edit.text())
+                    if self.sku_to_check != self.sku_line_edit.text():
+                        message.show_err_info("Вы не можете изменить SKU товара")
+                        self.sku_line_edit.setText(sku)
+                    else:
+                        db.edit_product(category, name, price, sku, expiry_date, image_url, features)
+                        self.product_name_line_edit.clear()
+                        self.product_price_line_edit.clear()
+                        self.sku_line_edit.clear()
+                        self.category_line_edit.clear()
+                        self.image_url_line_edit.clear()
+                        self.expire_date_line_edit.clear()
+                        self.product_price_line_edit.clear()
+                        self.close()
+
                 else:
                     message.show_err_info("Продукт с данным SKU уже есть в базе данных")
             else:

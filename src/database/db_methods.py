@@ -11,6 +11,7 @@ class DataBase:
             message.show_err_info(e)
 
         # Создание базы данных
+
     def __create_table(self):
         with self.conn:
             self.conn.execute("""
@@ -130,7 +131,8 @@ class DataBase:
     def add_product_to_bd(self, category, name, price, sku, expiry_date, image_url, features):
         with self.conn:
             self.conn.execute("INSERT INTO Products (category, name, price, SKU, expiry_date, image_url, features) "
-                              "VALUES (?, ?, ?, ?, ?, ?, ?)", (category, name, price, sku, expiry_date, image_url, features))
+                              "VALUES (?, ?, ?, ?, ?, ?, ?)",
+                              (category, name, price, sku, expiry_date, image_url, features))
 
             message.show_ok_info("Продукт добавлен")
 
@@ -140,6 +142,19 @@ class DataBase:
                 self.conn.execute(f"DELETE FROM {table_name} WHERE SKU = ?", (item,))
         except Exception as e:
             print(e)
+
+    def edit_product(self, category, name, price, sku, expiry_date, image_url, features):
+        try:
+            with self.conn:
+                print(category, sku, name)
+                self.conn.execute("UPDATE Products "
+                                  "SET category = ?, name = ?, price = ?, expiry_date = ?, image_url = ?, features = ? "
+                                  "WHERE SKU = ? ",
+                                  (category, name, price, expiry_date, image_url, features, sku))
+                message.show_ok_info("Продукт изменен")
+        except Exception as e:
+            print(e)
+
 
 '''
     def change_customer_in_db(self, name, lastname, phone, notes):
@@ -151,8 +166,6 @@ class DataBase:
 '''
 
 db = DataBase("Shop_info")
-
-
 
 if __name__ == '__main__':
     db.delete_from_db("Products", 1)
