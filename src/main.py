@@ -114,19 +114,16 @@ class ProductMenu(QtWidgets.QMainWindow, Ui_ProductMenu):
         super().__init__()
         self.setupUi(self)
         self.info = db.take_info_from_bd("Products", self.products_table_widget, "*")
-        try:
-            widget_operation.load_info_to_table_widget(self.info, self.products_table_widget)
-            self.products_table_widget.setHorizontalHeaderLabels(db.take_column_names("Products"))
-        except Exception as e:
-            print(e)
+        widget_operation.load_info_to_table_widget(self.info, self.products_table_widget)
+        self.products_table_widget.setHorizontalHeaderLabels(db.take_column_names("Products"))
 
         # Создание экземпляра класса для отображения формы заполнения информации о продукте
-        self.product_form = ProductForm()
+        self.product_form = None
 
         # Подключение сигналов
         self.add_new_product_button.clicked.connect(self.manage_product)
         self.remove_product_button.clicked.connect(self.remove_product)
-        # self.edit_product_button.clicked.connect()
+        self.edit_product_button.clicked.connect(self.edit_product)
         # self.search_by_name_button.clicked.connect()
         # self.products_table_widget
         # self.sort_combo_box(self.to_sort_combo)
@@ -136,9 +133,13 @@ class ProductMenu(QtWidgets.QMainWindow, Ui_ProductMenu):
         """
         Открывает форму для добавления, редактирования или удаления продукта.
         """
+        self.product_form = ProductForm("add_product")
         self.product_form.show()
 
     def remove_product(self):
+        """
+        Удаляет продукт из базы данных и обновляет TableWidget
+        """
         if not self.products_table_widget.selectedItems():
             message.show_ok_info("Выберите продукт для удаления")
         else:
@@ -150,6 +151,23 @@ class ProductMenu(QtWidgets.QMainWindow, Ui_ProductMenu):
             self.products_table_widget.clearSelection()
             self.reload_widget()
             message.show_ok_info(f"Продукт {name} удален")
+
+    def edit_product(self):
+        """
+        Изменяет продукт в базе данных и обновляет TableWidget
+        """
+        self.product_form = ProductForm("edit_product")
+        # if not self.products_table_widget.selectedItems():
+        #     message.show_ok_info("Выберите продукт для изменения")
+        # else:
+        #     self.info = db.take_info_from_bd("Products", self.products_table_widget, "*")
+        #     row = self.products_table_widget.currentRow()
+        #     name = (self.info[row])[2]
+        #     to_change = (self.info[row])[4]
+        #     db.delete_from_db("Products", to_change)
+        #     self.products_table_widget.clearSelection()
+        #     self.reload_widget()
+        #     message.show_ok_info(f"Продукт {name} удален")
 
     def reload_widget(self):
         """
@@ -369,12 +387,17 @@ class ProductForm(QtWidgets.QMainWindow, Ui_ProductForm):
     Этот класс предоставляет интерфейс для добавления или редактирования
     информации о продукте, включая название, цену и описание.
     """
-    def __init__(self):
+    def __init__(self, operation):
         super().__init__()
         self.setupUi(self)
+        self.operation = operation
 
         # Подключение сигналов
-        self.add_or_change_button.clicked.connect(self.add_or_change_product)
+        if self.operation == 'add_product':
+            self.add_or_change_button.clicked.connect(self.add_or_change_product)
+        # elif self.operation == 'edit_product':
+        #     self.add
+
 
     def add_or_change_product(self):
         name = self.product_name_line_edit.text().strip()
