@@ -62,7 +62,7 @@ class Ui_ProductMenu(object):
         self.add_new_product_button.setText(_translate("ProductMenu", "Добавить продукт"))
         self.remove_product_button.setText(_translate("ProductMenu", "Удалить продукт"))
         self.edit_product_button.setText(_translate("ProductMenu", "Изменить продукт"))
-        self.search_by_name_button.setText(_translate("ProductMenu", "Поиск по SKU"))
+        self.search_by_name_button.setText(_translate("ProductMenu", "Поиск продукта"))
         self.sort_combo_box.setItemText(0, _translate("ProductMenu", "Название"))
         self.sort_combo_box.setItemText(1, _translate("ProductMenu", "Номер товара"))
         self.sort_combo_box.setItemText(2, _translate("ProductMenu", "Название(обратный порядок)"))

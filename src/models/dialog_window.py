@@ -34,7 +34,7 @@ class SearchWindow(QDialog):
 
         layout = QVBoxLayout()
 
-        self.label = QLabel("Введите SKU (или его часть)")
+        self.label = QLabel("Введите любой критерий")
         layout.addWidget(self.label)
 
         self.search_line_edit = QLineEdit()
