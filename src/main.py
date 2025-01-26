@@ -13,6 +13,8 @@ from src.models.message_box import message
 from models.help_methods import validation
 from models.help_methods import widget_operation
 
+from models.dialog_window import WhatWindow, SearchWindow
+
 from PyQt5 import QtWidgets  # QtCore, QtGui
 
 import sys
@@ -124,7 +126,7 @@ class ProductMenu(QtWidgets.QMainWindow, Ui_ProductMenu):
         self.add_new_product_button.clicked.connect(self.manage_product)
         self.remove_product_button.clicked.connect(self.remove_product)
         self.edit_product_button.clicked.connect(self.edit_product)
-        # self.search_by_name_button.clicked.connect()
+        self.search_by_name_button.clicked.connect(self.search_product)
         # self.products_table_widget
         # self.sort_combo_box(self.to_sort_combo)
         self.refresh_button.clicked.connect(self.reload_widget)
@@ -147,10 +149,14 @@ class ProductMenu(QtWidgets.QMainWindow, Ui_ProductMenu):
             row = self.products_table_widget.currentRow()
             name = (self.info[row])[2]
             to_del = (self.info[row])[4]
-            db.delete_from_db("Products", to_del)
-            self.products_table_widget.clearSelection()
-            self.reload_widget()
-            message.show_ok_info(f"Продукт {name} удален")
+            what = WhatWindow("product", name)
+            if what.exec_():
+                db.delete_from_db("Products", to_del)
+                self.products_table_widget.clearSelection()
+                self.reload_widget()
+                message.show_ok_info(f"Продукт {name} удален")
+            else:
+                self.products_table_widget.clearSelection()
 
     def edit_product(self):
         """
@@ -176,6 +182,20 @@ class ProductMenu(QtWidgets.QMainWindow, Ui_ProductMenu):
         self.info = db.take_info_from_bd("Products", self.products_table_widget, "*")
         widget_operation.load_info_to_table_widget(self.info, self.products_table_widget)
         self.products_table_widget.setHorizontalHeaderLabels(db.take_column_names("Products"))
+
+    def search_product(self):
+        """
+        Выгружает продукты по SKU с совпавшей подстрокой указанной в QDialog LineEdit
+        """
+        search = SearchWindow()
+        search.exec_()
+        try:
+            to_search = search.search_line_edit.text()
+            self.info = db.take_info_from_db_by_param("Products", to_search)
+            widget_operation.load_info_to_table_widget(self.info, self.products_table_widget)
+            self.products_table_widget.setHorizontalHeaderLabels(db.take_column_names("Products"))
+        except Exception as e:
+            print(e)
 
 
 class OrdersMenu(QtWidgets.QMainWindow, Ui_OrdersMenu):
@@ -401,6 +421,8 @@ class ProductForm(QtWidgets.QMainWindow, Ui_ProductForm):
         self.expire_date_line_edit.setText(expiry_date)
         self.textEdit.setText(features)
 
+        if self.operation == "edit_product":
+            self.sku_line_edit.setReadOnly(True)
         # sku
         self.sku_to_check = sku
 
@@ -435,26 +457,22 @@ class ProductForm(QtWidgets.QMainWindow, Ui_ProductForm):
 
                 elif self.operation == "edit_product":
                     print(sku, self.sku_line_edit.text())
-                    if self.sku_to_check != self.sku_line_edit.text():
-                        message.show_err_info("Вы не можете изменить SKU товара")
-                        self.sku_line_edit.setText(sku)
-                    else:
-                        db.edit_product(category, name, price, sku, expiry_date, image_url, features)
-                        self.product_name_line_edit.clear()
-                        self.product_price_line_edit.clear()
-                        self.sku_line_edit.clear()
-                        self.category_line_edit.clear()
-                        self.image_url_line_edit.clear()
-                        self.expire_date_line_edit.clear()
-                        self.product_price_line_edit.clear()
-                        self.close()
+
+                    db.edit_product(category, name, price, sku, expiry_date, image_url, features)
+                    self.product_name_line_edit.clear()
+                    self.product_price_line_edit.clear()
+                    self.sku_line_edit.clear()
+                    self.category_line_edit.clear()
+                    self.image_url_line_edit.clear()
+                    self.expire_date_line_edit.clear()
+                    self.product_price_line_edit.clear()
+                    self.close()
 
                 else:
                     message.show_err_info("Продукт с данным SKU уже есть в базе данных")
             else:
                 message.show_err_info("Поле должно содержать больше 3 элементов")
         else:
-            print(required_keys)
             message.show_err_info("Заполните обязательные поля")
 
 

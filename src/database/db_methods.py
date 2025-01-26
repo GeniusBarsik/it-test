@@ -123,6 +123,15 @@ class DataBase:
             info = self.conn.execute(f"SELECT {params} FROM {table_name}").fetchall()
             return info
 
+    def take_info_from_db_by_param(self, table_name, param):
+        params = "*"
+        with self.conn:
+            print(params)
+            info = self.conn.execute(f"SELECT {params} FROM {table_name} "
+                                     f"WHERE (sku LIKE ? OR name LIKE ? OR category LIKE ? OR price LIKE ?)",
+                                     ("%" + param + "%", "%" + param + "%", "%" + param + "%", "%" + param + "%",)).fetchall()
+            return info
+
     def take_column_names(self, table_name):
         names = self.conn.execute(f"PRAGMA table_info({table_name})").fetchall()
         names = [col[1] for col in names]
