@@ -164,6 +164,18 @@ class DataBase:
         except Exception as e:
             print(e)
 
+    def sort_info(self, table_name, param, reverse=False):
+        try:
+            with self.conn:
+                if not reverse:
+                    info = self.conn.execute(f"SELECT * FROM {table_name} ORDER BY {param}").fetchall()
+                    return info
+                else:
+                    info = self.conn.execute(f"SELECT * FROM {table_name} ORDER BY {param} DESC").fetchall()
+                    return info
+        except Exception as e:
+            print(e)
+
 
 '''
     def change_customer_in_db(self, name, lastname, phone, notes):

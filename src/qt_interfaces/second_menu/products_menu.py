@@ -44,6 +44,7 @@ class Ui_ProductMenu(object):
         self.sort_combo_box.addItem("")
         self.sort_combo_box.addItem("")
         self.sort_combo_box.addItem("")
+        self.sort_combo_box.addItem("")
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(150, 360, 111, 16))
         self.label.setObjectName("label")
@@ -51,6 +52,9 @@ class Ui_ProductMenu(object):
         self.refresh_button.setGeometry(QtCore.QRect(10, 250, 121, 41))
         self.refresh_button.setStyleSheet("font: 10pt \"Segoe UI\";")
         self.refresh_button.setObjectName("refresh_button")
+        self.checkBox = QtWidgets.QCheckBox(self.centralwidget)
+        self.checkBox.setGeometry(QtCore.QRect(410, 360, 101, 17))
+        self.checkBox.setObjectName("checkBox")
         ProductMenu.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(ProductMenu)
@@ -65,9 +69,11 @@ class Ui_ProductMenu(object):
         self.search_by_name_button.setText(_translate("ProductMenu", "Поиск продукта"))
         self.sort_combo_box.setItemText(0, _translate("ProductMenu", "Название"))
         self.sort_combo_box.setItemText(1, _translate("ProductMenu", "Номер товара"))
-        self.sort_combo_box.setItemText(2, _translate("ProductMenu", "Название(обратный порядок)"))
+        self.sort_combo_box.setItemText(2, _translate("ProductMenu", "Цена"))
+        self.sort_combo_box.setItemText(3, _translate("ProductMenu", "Категория"))
         self.label.setText(_translate("ProductMenu", "Сортировать по:"))
         self.refresh_button.setText(_translate("ProductMenu", "Обновить"))
+        self.checkBox.setText(_translate("ProductMenu", "По убыванию"))
 
 
 if __name__ == "__main__":

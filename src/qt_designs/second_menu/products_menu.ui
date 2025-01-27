@@ -85,7 +85,7 @@
      <string notr="true">font: 10pt &quot;Segoe UI&quot;;</string>
     </property>
     <property name="text">
-     <string>Поиск по SKU</string>
+     <string>Поиск продукта</string>
     </property>
    </widget>
    <widget class="QComboBox" name="sort_combo_box">
@@ -109,7 +109,12 @@
     </item>
     <item>
      <property name="text">
-      <string>Название(обратный порядок)</string>
+      <string>Цена</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Категория</string>
      </property>
     </item>
    </widget>
@@ -140,6 +145,19 @@
     </property>
     <property name="text">
      <string>Обновить</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>360</y>
+      <width>101</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>По убыванию</string>
     </property>
    </widget>
   </widget>

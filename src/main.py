@@ -128,7 +128,7 @@ class ProductMenu(QtWidgets.QMainWindow, Ui_ProductMenu):
         self.edit_product_button.clicked.connect(self.edit_product)
         self.search_by_name_button.clicked.connect(self.search_product)
         # self.products_table_widget
-        # self.sort_combo_box(self.to_sort_combo)
+        self.sort_combo_box.currentIndexChanged.connect(self.to_sort_combo)
         self.refresh_button.clicked.connect(self.reload_widget)
 
     def manage_product(self):
@@ -197,6 +197,18 @@ class ProductMenu(QtWidgets.QMainWindow, Ui_ProductMenu):
         except Exception as e:
             print(e)
 
+    def to_sort_combo(self):
+        text = self.sort_combo_box.currentText()
+        d = {"Название":"name", "Номер товара":"SKU", "Цена":"price", "Категория":"category"}
+        if not self.checkBox.isChecked():
+            info = db.sort_info("Products", d[text])
+        else:
+            info = db.sort_info("Products", d[text], reverse=True)
+        try:
+            widget_operation.load_info_to_table_widget(info, self.products_table_widget)
+            self.products_table_widget.setHorizontalHeaderLabels(db.take_column_names("Products"))
+        except Exception as e:
+            print(e)
 
 class OrdersMenu(QtWidgets.QMainWindow, Ui_OrdersMenu):
     """
